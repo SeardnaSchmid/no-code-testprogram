@@ -52,13 +52,25 @@ interface MultiplicationResult extends BaseResult {
     input1: UUID;
     input2: UUID;
 }
+// PARAMETERS
+interface NumericParameter extends BaseEntity {
+    value: number;
+}
+interface TextParameter extends BaseEntity {
+    value: string;
+}
+interface ArrayParameter extends BaseEntity {
+    value: number[];
+}
 
 type STLChannel = MultiplicationChannel | DeviceChannel;
 type STLResults = MaximumResult | MinimumResult | MultiplicationResult;
+type STLParameter = NumericParameter | TextParameter | ArrayParameter;
 
 interface StandardTestingLibrary {
     channels?: STLChannel[];
     results?: STLResults[];
+    parameters?: STLParameter[]
 }
 
 const stl: StandardTestingLibrary = {
@@ -95,6 +107,16 @@ const stl: StandardTestingLibrary = {
             algorithm: StlAlgorithm.multiplication,
             input1: StlMacroIds.Parameter.SpecimenWidth,
             input2: StlMacroIds.Parameter.SpecimenThickness,
+        }
+    ],
+    parameters: [
+        {
+            uuid: StlMacroIds.Parameter.SpecimenWidth,
+            value: 1, // default value
+        },
+        {
+            uuid: StlMacroIds.Parameter.SpecimenThickness,
+            value: 1, // default value
         }
     ]
 }
