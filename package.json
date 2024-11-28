@@ -1,0 +1,10 @@
+{
+  "name": "no-code-testprogram",
+  "packageManager": "yarn@4.2.2",
+  "dependencies": {
+    "node-red": "^4.0.5"
+  },
+  "scripts": {
+    "start": "node-red"
+  }
+}
