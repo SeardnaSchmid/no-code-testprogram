@@ -2,6 +2,12 @@ import { STLUUID as StlMacroIds, STLUUID } from "./stl-uuids";
 
 type UUID = string; // UUIDs are strings
 
+enum StlAlgorithm {
+    multiplication = 'multiplication',
+    maximum = 'maximum',
+    minimum = 'minimum',
+}
+
 enum StlUnitTable {
     Force = 'stl.unittable.force',
     Stress = 'stl.unittable.stress',
@@ -10,29 +16,22 @@ enum StlUnitTable {
     Area = 'stl.unittable.area',
 }
 
-// Base interfaces
-interface BaseChannel {
+interface BaseEntity {
     uuid: UUID;
-    unitTable: StlUnitTable;
 }
 
-interface BaseResult {
-    uuid: UUID;
-    unitTable: StlUnitTable;
+interface BaseChannel extends BaseEntity {
+    unittable: string;
 }
-
-// Algorithm enumeration
-enum StlAlgorithm {
-    multiplication = 'multiplication',
-    maximum = 'maximum',
-    minimum = 'minimum',
+interface BaseResult extends BaseEntity{
+    unittable: string;
+    algorithm: StlAlgorithm;
 }
 
 // CHANNELS
 interface DeviceChannel extends BaseChannel {
     deviceInput: UUID;
 }
-
 interface MultiplicationChannel extends BaseChannel {
     algorithm: StlAlgorithm.multiplication;
     inputChannelId1: UUID;
@@ -44,55 +43,58 @@ interface MaximumResult extends BaseResult {
     algorithm: StlAlgorithm.maximum;
     input: UUID;
 }
-
 interface MinimumResult extends BaseResult {
     algorithm: StlAlgorithm.minimum;
     input: UUID;
 }
-
 interface MultiplicationResult extends BaseResult {
     algorithm: StlAlgorithm.multiplication;
     input1: UUID;
     input2: UUID;
 }
 
-type STLChannel = DeviceChannel | MultiplicationChannel;
+type STLChannel = MultiplicationChannel | DeviceChannel;
 type STLResults = MaximumResult | MinimumResult | MultiplicationResult;
 
-// Main interface
 interface StandardTestingLibrary {
     channels?: STLChannel[];
     results?: STLResults[];
 }
 
-// Constants
 const stl: StandardTestingLibrary = {
     channels: [
         {
-            uuid: STLUUID.Channels.Force,
-            unitTable: StlUnitTable.Force,
-            deviceInput: STLUUID.Devices.ForceSensor,
+            uuid: StlMacroIds.Channel.Force,
+            unittable: StlUnitTable.Force,
+            deviceInput: StlMacroIds.Device.ForceSensor,
         },
         {
-            uuid: STLUUID.Channels.Stress,
-            unitTable: StlUnitTable.Stress,
+            uuid: StlMacroIds.Channel.Stress,
+            unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.multiplication,
-            inputChannelId1: STLUUID.Channels.Force,
-            inputChannelId2: STLUUID.Parameters.CrossSection,
-        },
+            inputChannelId1: StlMacroIds.Channel.Force,
+            inputChannelId2: StlMacroIds.Channel.Area,
+        }
     ],
     results: [
         {
-            uuid: STLUUID.Results.ForceMaximum,
-            unitTable: StlUnitTable.Force,
+            uuid: StlMacroIds.Result.ForceMaximum,
+            unittable: StlUnitTable.Force,
             algorithm: StlAlgorithm.maximum,
-            input: STLUUID.Channels.Force,
+            input: StlMacroIds.Channel.Force,
         },
         {
-            uuid: STLUUID.Results.StressMaximum,
-            unitTable: StlUnitTable.Stress,
+            uuid: StlMacroIds.Result.StressMaximum,
+            unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.maximum,
-            input: STLUUID.Channels.Stress,
+            input: StlMacroIds.Channel.Stress,
         },
-    ],
-};
+        {
+            uuid: STLUUID.Result.CrossSection,
+            unittable: StlUnitTable.Area,
+            algorithm: StlAlgorithm.multiplication,
+            input1: StlMacroIds.Parameter.SpecimenWidth,
+            input2: StlMacroIds.Parameter.SpecimenThickness,
+        }
+    ]
+}
