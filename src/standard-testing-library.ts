@@ -1,19 +1,12 @@
-type UUID = string; // UUIDs are strings
+export type UUID = string; // UUIDs are strings
 
-type STLUUIDS = {
-    Channel: { [key: string]: UUID };
-    Result: { [key: string]: UUID };
-    Parameter: { [key: string]: UUID };
-    Device: { [key: string]: UUID };
-};
-
-enum StlAlgorithm {
+export enum StlAlgorithm {
     multiplication = 'multiplication',
     maximum = 'maximum',
     minimum = 'minimum',
 }
 
-enum StlUnitTable {
+export enum StlUnitTable {
     Force = 'stl.unittable.force',
     Stress = 'stl.unittable.stress',
     Displacement = 'stl.unittable.displacement',
@@ -69,17 +62,17 @@ interface ArrayParameter extends BaseEntity {
     value: number[];
 }
 
-type STLChannel = MultiplicationChannel | DeviceChannel;
-type STLResults = MaximumResult | MinimumResult | MultiplicationResult;
-type STLParameter = NumericParameter | TextParameter | ArrayParameter;
+export type STLChannel = MultiplicationChannel | DeviceChannel;
+export type STLResults = MaximumResult | MinimumResult | MultiplicationResult;
+export type STLParameter = NumericParameter | TextParameter | ArrayParameter;
 
-interface StandardTestingLibrary {
+export interface StandardTestingLibrary {
     channels?: STLChannel[];
     results?: STLResults[];
     parameters?: STLParameter[]
 }
 
-const STLUUID: STLUUIDS = {
+export const STLUUID = {
     Channel: {
         Force: 'uuid.channel.force',
         Stress: 'uuid.channel.stress',
@@ -95,6 +88,9 @@ const STLUUID: STLUUIDS = {
     Parameter: {
         SpecimenWidth: 'uuid.parameter.specimenWidth',
         SpecimenThickness: 'uuid.parameter.specimenThickness',
+        SpecimentLength: 'uuid.parameter.specimenLength',
+        SpecimentDiameter: 'uuid.parameter.specimenDiameter',
+        GaugeLength: 'uuid.parameter.gaugeLength',
     },
     Device: {
         ForceSensor: 'uuid.device.forceSensor',
@@ -104,7 +100,7 @@ const STLUUID: STLUUIDS = {
     }
 }
 
-const stl: StandardTestingLibrary = {
+export const stl: StandardTestingLibrary = {
     channels: [
         {
             uuid: STLUUID.Channel.Force,
@@ -116,8 +112,8 @@ const stl: StandardTestingLibrary = {
             unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.multiplication,
             inputChannelId1: STLUUID.Channel.Force,
-            inputChannelId2: STLUUID.Channel.Area,
-        }
+            inputChannelId2: STLUUID.Result.CrossSection,
+        },
     ],
     results: [
         {
@@ -148,6 +144,18 @@ const stl: StandardTestingLibrary = {
         {
             uuid: STLUUID.Parameter.SpecimenThickness,
             value: 1, // default value
-        }
+        },
+        {
+            uuid: STLUUID.Parameter.SpecimentLength,
+            value: 1, // default value
+        },
+        {
+            uuid: STLUUID.Parameter.SpecimentDiameter,
+            value: 1, // default value
+        },
+        {
+            uuid: STLUUID.Parameter.GaugeLength,
+            value: 115, // default value
+        },
     ]
 }

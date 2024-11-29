@@ -1,5 +1,7 @@
-
-export const readonly, STLUUIDS = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.STLUUIDS = exports.readonly = void 0;
+exports.STLUUIDS = {
     Channels: {
         Force: 'force-channel-uuid',
     },
