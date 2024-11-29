@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.stl = exports.STLUUID = exports.StlUnitTable = exports.StlAlgorithm = void 0;
+exports.allSTLEntities = exports.STLUUID = exports.StlUnitTable = exports.StlAlgorithm = void 0;
 var StlAlgorithm;
 (function (StlAlgorithm) {
     StlAlgorithm["multiplication"] = "multiplication";
@@ -42,12 +42,13 @@ exports.STLUUID = {
         StrainSensor: 'uuid.device.strainSensor',
     }
 };
-exports.stl = {
+exports.allSTLEntities = {
     channels: [
         {
             uuid: exports.STLUUID.Channel.Force,
             unittable: StlUnitTable.Force,
             deviceInput: exports.STLUUID.Device.ForceSensor,
+            dependencies: [exports.STLUUID.Device.ForceSensor],
         },
         {
             uuid: exports.STLUUID.Channel.Stress,
@@ -55,6 +56,7 @@ exports.stl = {
             algorithm: StlAlgorithm.multiplication,
             inputChannelId1: exports.STLUUID.Channel.Force,
             inputChannelId2: exports.STLUUID.Result.CrossSection,
+            dependencies: [exports.STLUUID.Channel.Force, exports.STLUUID.Result.CrossSection],
         },
     ],
     results: [
@@ -63,12 +65,14 @@ exports.stl = {
             unittable: StlUnitTable.Force,
             algorithm: StlAlgorithm.maximum,
             input: exports.STLUUID.Channel.Force,
+            dependencies: [exports.STLUUID.Channel.Force],
         },
         {
             uuid: exports.STLUUID.Result.StressMaximum,
             unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.maximum,
             input: exports.STLUUID.Channel.Stress,
+            dependencies: [exports.STLUUID.Channel.Stress],
         },
         {
             uuid: exports.STLUUID.Result.CrossSection,
@@ -76,6 +80,7 @@ exports.stl = {
             algorithm: StlAlgorithm.multiplication,
             input1: exports.STLUUID.Parameter.SpecimenWidth,
             input2: exports.STLUUID.Parameter.SpecimenThickness,
+            dependencies: [exports.STLUUID.Parameter.SpecimenWidth, exports.STLUUID.Parameter.SpecimenThickness],
         }
     ],
     parameters: [

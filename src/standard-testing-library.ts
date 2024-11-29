@@ -14,62 +14,63 @@ export enum StlUnitTable {
     Area = 'stl.unittable.area',
 }
 
-interface BaseEntity {
+interface IBaseEntity {
     uuid: UUID;
+    dependencies?: UUID[];
 }
 
-interface BaseChannel extends BaseEntity {
+interface IBaseChannel extends IBaseEntity {
     unittable: string;
 }
-interface BaseResult extends BaseEntity{
+interface IBaseResult extends IBaseEntity{
     unittable: string;
     algorithm: StlAlgorithm;
 }
 
 // CHANNELS
-interface DeviceChannel extends BaseChannel {
+interface IDeviceChannel extends IBaseChannel {
     deviceInput: UUID;
 }
-interface MultiplicationChannel extends BaseChannel {
+interface IMultiplicationChannel extends IBaseChannel {
     algorithm: StlAlgorithm.multiplication;
     inputChannelId1: UUID;
     inputChannelId2: UUID;
 }
 
 // RESULTS
-interface MaximumResult extends BaseResult {
+interface IMaximumResult extends IBaseResult {
     algorithm: StlAlgorithm.maximum;
     input: UUID;
 }
-interface MinimumResult extends BaseResult {
+interface IMinimumResult extends IBaseResult {
     algorithm: StlAlgorithm.minimum;
     input: UUID;
 }
-interface MultiplicationResult extends BaseResult {
+interface IMultiplicationResult extends IBaseResult {
     algorithm: StlAlgorithm.multiplication;
     input1: UUID;
     input2: UUID;
 }
 
 // PARAMETERS
-interface NumericParameter extends BaseEntity {
+interface INumericParameter extends IBaseEntity {
     value: number;
 }
-interface TextParameter extends BaseEntity {
+interface ITextParameter extends IBaseEntity {
     value: string;
 }
-interface ArrayParameter extends BaseEntity {
+interface IArrayParameter extends IBaseEntity {
     value: number[];
 }
 
-export type STLChannel = MultiplicationChannel | DeviceChannel;
-export type STLResults = MaximumResult | MinimumResult | MultiplicationResult;
-export type STLParameter = NumericParameter | TextParameter | ArrayParameter;
+export type ISTLChannel = IMultiplicationChannel | IDeviceChannel;
+export type ISTLResult = IMaximumResult | IMinimumResult | IMultiplicationResult;
+export type ISTLParameter = INumericParameter | ITextParameter | IArrayParameter;
 
-export interface StandardTestingLibrary {
-    channels?: STLChannel[];
-    results?: STLResults[];
-    parameters?: STLParameter[]
+export interface IStandardTestingLibrary {
+    channels: ISTLChannel[];
+    results: ISTLResult[];
+    parameters: ISTLParameter[]
 }
 
 export const STLUUID = {
@@ -100,12 +101,13 @@ export const STLUUID = {
     }
 }
 
-export const stl: StandardTestingLibrary = {
+export const allSTLEntities: IStandardTestingLibrary = {
     channels: [
         {
             uuid: STLUUID.Channel.Force,
             unittable: StlUnitTable.Force,
             deviceInput: STLUUID.Device.ForceSensor,
+            dependencies: [STLUUID.Device.ForceSensor],
         },
         {
             uuid: STLUUID.Channel.Stress,
@@ -113,6 +115,7 @@ export const stl: StandardTestingLibrary = {
             algorithm: StlAlgorithm.multiplication,
             inputChannelId1: STLUUID.Channel.Force,
             inputChannelId2: STLUUID.Result.CrossSection,
+            dependencies: [STLUUID.Channel.Force, STLUUID.Result.CrossSection],
         },
     ],
     results: [
@@ -121,12 +124,14 @@ export const stl: StandardTestingLibrary = {
             unittable: StlUnitTable.Force,
             algorithm: StlAlgorithm.maximum,
             input: STLUUID.Channel.Force,
+            dependencies: [STLUUID.Channel.Force],
         },
         {
             uuid: STLUUID.Result.StressMaximum,
             unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.maximum,
             input: STLUUID.Channel.Stress,
+            dependencies: [STLUUID.Channel.Stress],
         },
         {
             uuid: STLUUID.Result.CrossSection,
@@ -134,6 +139,7 @@ export const stl: StandardTestingLibrary = {
             algorithm: StlAlgorithm.multiplication,
             input1: STLUUID.Parameter.SpecimenWidth,
             input2: STLUUID.Parameter.SpecimenThickness,
+            dependencies: [STLUUID.Parameter.SpecimenWidth, STLUUID.Parameter.SpecimenThickness],
         }
     ],
     parameters: [
