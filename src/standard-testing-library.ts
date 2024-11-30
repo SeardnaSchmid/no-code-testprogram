@@ -16,7 +16,7 @@ export enum StlUnitTable {
 
 interface IBaseEntity {
     uuid: UUID;
-    dependencies?: UUID[];
+    // dependencies removed
 }
 
 interface IBaseChannel extends IBaseEntity {
@@ -73,6 +73,14 @@ export interface IStandardTestingLibrary {
     parameters: ISTLParameter[]
 }
 
+// New type utilities
+type IsUUID<T> = T extends UUID ? true : false;
+type ExtractUUIDKeys<T> = {
+    [K in keyof T]: IsUUID<T[K]> extends true ? K : never
+}[keyof T];
+
+export type EntityUUIDProperties<T> = Pick<T, ExtractUUIDKeys<T>>;
+
 export const STLUUID = {
     Channel: {
         Force: 'uuid.channel.force',
@@ -89,8 +97,8 @@ export const STLUUID = {
     Parameter: {
         SpecimenWidth: 'uuid.parameter.specimenWidth',
         SpecimenThickness: 'uuid.parameter.specimenThickness',
-        SpecimentLength: 'uuid.parameter.specimenLength',
-        SpecimentDiameter: 'uuid.parameter.specimenDiameter',
+        SpecimentLength: 'uuid.parameter.specimentLength',
+        SpecimentDiameter: 'uuid.parameter.specimentDiameter',
         GaugeLength: 'uuid.parameter.gaugeLength',
     },
     Device: {
@@ -107,7 +115,6 @@ export const allSTLEntities: IStandardTestingLibrary = {
             uuid: STLUUID.Channel.Force,
             unittable: StlUnitTable.Force,
             deviceInput: STLUUID.Device.ForceSensor,
-            dependencies: [STLUUID.Device.ForceSensor],
         },
         {
             uuid: STLUUID.Channel.Stress,
@@ -115,7 +122,6 @@ export const allSTLEntities: IStandardTestingLibrary = {
             algorithm: StlAlgorithm.multiplication,
             inputChannelId1: STLUUID.Channel.Force,
             inputChannelId2: STLUUID.Result.CrossSection,
-            dependencies: [STLUUID.Channel.Force, STLUUID.Result.CrossSection],
         },
     ],
     results: [
@@ -124,14 +130,12 @@ export const allSTLEntities: IStandardTestingLibrary = {
             unittable: StlUnitTable.Force,
             algorithm: StlAlgorithm.maximum,
             input: STLUUID.Channel.Force,
-            dependencies: [STLUUID.Channel.Force],
         },
         {
             uuid: STLUUID.Result.StressMaximum,
             unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.maximum,
             input: STLUUID.Channel.Stress,
-            dependencies: [STLUUID.Channel.Stress],
         },
         {
             uuid: STLUUID.Result.CrossSection,
@@ -139,7 +143,6 @@ export const allSTLEntities: IStandardTestingLibrary = {
             algorithm: StlAlgorithm.multiplication,
             input1: STLUUID.Parameter.SpecimenWidth,
             input2: STLUUID.Parameter.SpecimenThickness,
-            dependencies: [STLUUID.Parameter.SpecimenWidth, STLUUID.Parameter.SpecimenThickness],
         }
     ],
     parameters: [
