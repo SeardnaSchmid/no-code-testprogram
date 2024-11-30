@@ -7,26 +7,43 @@ function getDependenciesForResult(resultUUID, stl) {
     const results = [];
     const visited = new Set();
     function collectDependencies(uuid) {
-        var _a, _b;
         if (visited.has(uuid))
             return;
         visited.add(uuid);
-        const result = standard_testing_library_1.allSTLEntities.results.find(r => r.uuid === uuid);
-        if (result) {
-            results.push(result);
-            (_a = result.dependencies) === null || _a === void 0 ? void 0 : _a.forEach(collectDependencies);
+        // Find the entity
+        const entity = stl.results.find(r => r.uuid === uuid) ||
+            stl.channels.find(c => c.uuid === uuid) ||
+            stl.parameters.find(p => p.uuid === uuid);
+        if (!entity)
             return;
+        // Add to appropriate collection
+        if ('algorithm' in entity && 'unittable' in entity) {
+            if (!results.includes(entity)) {
+                results.push(entity);
+            }
         }
-        const channel = standard_testing_library_1.allSTLEntities.channels.find(c => c.uuid === uuid);
-        if (channel) {
-            channels.push(channel);
-            (_b = channel.dependencies) === null || _b === void 0 ? void 0 : _b.forEach(collectDependencies);
-            return;
+        else if ('unittable' in entity) {
+            if (!channels.includes(entity)) {
+                channels.push(entity);
+            }
         }
-        const parameter = stl.parameters.find(p => p.uuid === uuid);
-        if (parameter) {
-            parameters.push(parameter);
+        else {
+            if (!parameters.includes(entity)) {
+                parameters.push(entity);
+            }
         }
+        // Collect dependencies from all UUID properties
+        Object.values(entity).forEach(value => {
+            if (typeof value === 'string' && value !== entity.uuid) {
+                // Check if the string value matches UUID pattern or exists in STL
+                const isUUID = stl.results.some(r => r.uuid === value) ||
+                    stl.channels.some(c => c.uuid === value) ||
+                    stl.parameters.some(p => p.uuid === value);
+                if (isUUID) {
+                    collectDependencies(value);
+                }
+            }
+        });
     }
     collectDependencies(resultUUID);
     return { parameters, results, channels };

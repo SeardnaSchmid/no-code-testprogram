@@ -31,8 +31,8 @@ exports.STLUUID = {
     Parameter: {
         SpecimenWidth: 'uuid.parameter.specimenWidth',
         SpecimenThickness: 'uuid.parameter.specimenThickness',
-        SpecimentLength: 'uuid.parameter.specimenLength',
-        SpecimentDiameter: 'uuid.parameter.specimenDiameter',
+        SpecimentLength: 'uuid.parameter.specimentLength',
+        SpecimentDiameter: 'uuid.parameter.specimentDiameter',
         GaugeLength: 'uuid.parameter.gaugeLength',
     },
     Device: {
@@ -48,7 +48,6 @@ exports.allSTLEntities = {
             uuid: exports.STLUUID.Channel.Force,
             unittable: StlUnitTable.Force,
             deviceInput: exports.STLUUID.Device.ForceSensor,
-            dependencies: [exports.STLUUID.Device.ForceSensor],
         },
         {
             uuid: exports.STLUUID.Channel.Stress,
@@ -56,7 +55,6 @@ exports.allSTLEntities = {
             algorithm: StlAlgorithm.multiplication,
             inputChannelId1: exports.STLUUID.Channel.Force,
             inputChannelId2: exports.STLUUID.Result.CrossSection,
-            dependencies: [exports.STLUUID.Channel.Force, exports.STLUUID.Result.CrossSection],
         },
     ],
     results: [
@@ -65,14 +63,12 @@ exports.allSTLEntities = {
             unittable: StlUnitTable.Force,
             algorithm: StlAlgorithm.maximum,
             input: exports.STLUUID.Channel.Force,
-            dependencies: [exports.STLUUID.Channel.Force],
         },
         {
             uuid: exports.STLUUID.Result.StressMaximum,
             unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.maximum,
             input: exports.STLUUID.Channel.Stress,
-            dependencies: [exports.STLUUID.Channel.Stress],
         },
         {
             uuid: exports.STLUUID.Result.CrossSection,
@@ -80,7 +76,6 @@ exports.allSTLEntities = {
             algorithm: StlAlgorithm.multiplication,
             input1: exports.STLUUID.Parameter.SpecimenWidth,
             input2: exports.STLUUID.Parameter.SpecimenThickness,
-            dependencies: [exports.STLUUID.Parameter.SpecimenWidth, exports.STLUUID.Parameter.SpecimenThickness],
         }
     ],
     parameters: [
