@@ -14,8 +14,10 @@ function getDependenciesForResult(resultUUID, stl) {
         const entity = stl.results.find(r => r.uuid === uuid) ||
             stl.channels.find(c => c.uuid === uuid) ||
             stl.parameters.find(p => p.uuid === uuid);
-        if (!entity)
-            return;
+        if (!entity) {
+            console.debug(`Entity with UUID ${uuid} not found.`);
+            return; // If no entity is found, return early
+        }
         // Add to appropriate collection
         if ('algorithm' in entity && 'unittable' in entity) {
             if (!results.includes(entity)) {
