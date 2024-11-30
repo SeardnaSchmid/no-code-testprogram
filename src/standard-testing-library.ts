@@ -1,3 +1,5 @@
+import { ImportedExistingCrossSectionResult } from './existing-entities';
+
 export type UUID = string; // UUIDs are strings
 
 export enum StlAlgorithm {
@@ -92,7 +94,7 @@ export const STLUUID = {
         ForceMaximum: 'uuid.result.force.maximum',
         StressMaximum: 'uuid.result.stress.maximum',
         ReferenceValue: 'uuid.result.referenceValue',
-        CrossSection: 'uuid.result.crossSection',
+        CrossSection: ImportedExistingCrossSectionResult.id, // Updated to use imported ID
     },
     Parameter: {
         SpecimenWidth: 'uuid.parameter.specimenWidth',

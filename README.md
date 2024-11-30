@@ -12,6 +12,12 @@ A TypeScript library for managing test dependencies in a standardized testing en
 - Channel and device management
 - Parameter handling (numeric, text, array)
 
+## Proof of Concept Features
+
+- Type safety tested
+- Dependency checking tested
+- Importing of existing entities tested
+
 ## Installation
 
 ```sh
@@ -24,12 +30,19 @@ yarn install
 import { getDependenciesForResult, STLUUID, allSTLEntities } from './src';
 
 const dependencies = getDependenciesForResult(STLUUID.Result.StressMaximum, allSTLEntities);
+console.log(dependencies);
 ```
 
 ## Development
 
 ```sh
 yarn start
+```
+
+## Building
+
+```sh
+yarn build
 ```
 
 ## Project Structure
