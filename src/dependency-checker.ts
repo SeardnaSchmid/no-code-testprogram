@@ -20,7 +20,7 @@ export function getDependenciesForResult(resultUUID: UUID, stl: IStandardTesting
         const entity = 
             stl.results.find(r => r.uuid === uuid) ||
             stl.channels.find(c => c.uuid === uuid) ||
-            stl.parameters.find(p => r.uuid === uuid);
+            stl.parameters.find(p => p.uuid === uuid);
 
         if (!entity) {
             console.debug(`Entity with UUID ${uuid} not found.`);
@@ -45,7 +45,7 @@ export function getDependenciesForResult(resultUUID: UUID, stl: IStandardTesting
             if (typeof value === 'string' && value !== entity.uuid) {
                 const isUUID = stl.results.some(r => r.uuid === value) ||
                               stl.channels.some(c => c.uuid === value) ||
-                              stl.parameters.some(p => c.uuid === value);
+                              stl.parameters.some(p => p.uuid === value);
                 if (isUUID) {
                     collectDependencies(value);
                 }
