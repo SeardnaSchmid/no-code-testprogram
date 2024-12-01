@@ -6,6 +6,7 @@ export enum StlAlgorithm {
     multiplication = 'multiplication',
     maximum = 'maximum',
     minimum = 'minimum',
+    average = "average",
 }
 
 export enum StlUnitTable {
@@ -38,20 +39,23 @@ interface IMultiplicationChannel extends IBaseChannel {
     inputChannelId1: UUID;
     inputChannelId2: UUID;
 }
-
 // RESULTS
 interface IMaximumResult extends IBaseResult {
     algorithm: StlAlgorithm.maximum;
-    input: UUID;
+    inputChannel: UUID;
 }
 interface IMinimumResult extends IBaseResult {
     algorithm: StlAlgorithm.minimum;
-    input: UUID;
+    inputChannel: UUID;
 }
 interface IMultiplicationResult extends IBaseResult {
     algorithm: StlAlgorithm.multiplication;
-    input1: UUID;
-    input2: UUID;
+    factor1: UUID;
+    factor2: UUID;
+}
+interface IAverageResult extends IBaseResult {
+    algorithm: StlAlgorithm.average;
+    inputChannel: UUID;
 }
 
 // PARAMETERS
@@ -66,13 +70,15 @@ interface IArrayParameter extends IBaseEntity {
 }
 
 export type ISTLChannel = IMultiplicationChannel | IDeviceChannel;
-export type ISTLResult = IMaximumResult | IMinimumResult | IMultiplicationResult;
+export type ISTLResult = IMaximumResult | IMinimumResult | IMultiplicationResult | IAverageResult;
 export type ISTLParameter = INumericParameter | ITextParameter | IArrayParameter;
+export type ISTLDevice = IBaseEntity;
 
 export interface IStandardTestingLibrary {
     channels: ISTLChannel[];
     results: ISTLResult[];
-    parameters: ISTLParameter[]
+    parameters: ISTLParameter[];
+    devices: ISTLDevice[];
 }
 
 // New type utilities
@@ -131,21 +137,35 @@ export const allSTLEntities: IStandardTestingLibrary = {
             uuid: STLUUID.Result.ForceMaximum,
             unittable: StlUnitTable.Force,
             algorithm: StlAlgorithm.maximum,
-            input: STLUUID.Channel.Force,
+            inputChannel: STLUUID.Channel.Force,
         },
         {
             uuid: STLUUID.Result.StressMaximum,
             unittable: StlUnitTable.Stress,
             algorithm: StlAlgorithm.maximum,
-            input: STLUUID.Channel.Stress,
+            inputChannel: STLUUID.Channel.Stress,
         },
         {
             uuid: STLUUID.Result.CrossSection,
             unittable: StlUnitTable.Area,
             algorithm: StlAlgorithm.multiplication,
-            input1: STLUUID.Parameter.SpecimenWidth,
-            input2: STLUUID.Parameter.SpecimenThickness,
+            factor1: STLUUID.Parameter.SpecimenWidth,
+            factor2: STLUUID.Parameter.SpecimenThickness,
         }
+    ],
+    devices: [
+        {
+            uuid: STLUUID.Device.ForceSensor,
+        },
+        {
+            uuid: STLUUID.Device.StressSensor,
+        },
+        {
+            uuid: STLUUID.Device.DisplacementSensor,
+        },
+        {
+            uuid: STLUUID.Device.StrainSensor,
+        },
     ],
     parameters: [
         {
