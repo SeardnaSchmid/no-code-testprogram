@@ -1,16 +1,19 @@
-
-import { IStandardTestingLibrary, ISTLChannel, ISTLParameter, ISTLResult, UUID } from "./standard-testing-library";
+import { UUID } from "./types/common";
+import { IChannel } from "./types/channels";
+import { IParameter } from "./types/parameters";
+import { IResult } from "./types/results";
+import { IStandardTestingLibrary } from "./standard-testing-library";
 
 export interface Dependencies {
-    parameters: ISTLParameter[];
-    channels: ISTLChannel[];
-    results: ISTLResult[];
+    parameters: IParameter[];
+    channels: IChannel[];
+    results: IResult[];
 }
 
 export function getDependenciesForResult(resultUUID: UUID, stl: IStandardTestingLibrary): Dependencies {
-    const parameters: ISTLParameter[] = [];
-    const channels: ISTLChannel[] = [];
-    const results: ISTLResult[] = [];
+    const parameters: IParameter[] = [];
+    const channels: IChannel[] = [];
+    const results: IResult[] = [];
     const visited = new Set<UUID>();
 
     function collectDependencies(uuid: UUID) {
@@ -28,16 +31,16 @@ export function getDependenciesForResult(resultUUID: UUID, stl: IStandardTesting
         }
 
         if ('algorithm' in entity && 'unittable' in entity) {
-            if (!results.includes(entity as ISTLResult)) {
-                results.push(entity as ISTLResult);
+            if (!results.includes(entity as IResult)) {
+                results.push(entity as IResult);
             }
         } else if ('unittable' in entity) {
-            if (!channels.includes(entity as ISTLChannel)) {
-                channels.push(entity as ISTLChannel);
+            if (!channels.includes(entity as IChannel)) {
+                channels.push(entity as IChannel);
             }
         } else {
-            if (!parameters.includes(entity as ISTLParameter)) {
-                parameters.push(entity as ISTLParameter);
+            if (!parameters.includes(entity as IParameter)) {
+                parameters.push(entity as IParameter);
             }
         }
 

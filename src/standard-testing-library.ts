@@ -1,93 +1,16 @@
 import { ImportedExistingCrossSectionResult } from './existing-entities';
-
-export type UUID = string; // UUIDs are strings
-
-export enum StlAlgorithm {
-    multiplication = 'multiplication',
-    maximum = 'maximum',
-    minimum = 'minimum',
-    average = "average",
-}
-
-export enum StlUnitTable {
-    Force = 'stl.unittable.force',
-    Stress = 'stl.unittable.stress',
-    Displacement = 'stl.unittable.displacement',
-    Strain = 'stl.unittable.strain',
-    Area = 'stl.unittable.area',
-}
-
-interface IBaseEntity {
-    uuid: UUID;
-    // dependencies removed
-}
-
-interface IBaseChannel extends IBaseEntity {
-    unittable: string;
-}
-interface IBaseResult extends IBaseEntity{
-    unittable: string;
-    algorithm: StlAlgorithm;
-}
-
-// CHANNELS
-interface IDeviceChannel extends IBaseChannel {
-    deviceInput: UUID;
-}
-interface IMultiplicationChannel extends IBaseChannel {
-    algorithm: StlAlgorithm.multiplication;
-    inputChannelId1: UUID;
-    inputChannelId2: UUID;
-}
-// RESULTS
-interface IMaximumResult extends IBaseResult {
-    algorithm: StlAlgorithm.maximum;
-    inputChannel: UUID;
-}
-interface IMinimumResult extends IBaseResult {
-    algorithm: StlAlgorithm.minimum;
-    inputChannel: UUID;
-}
-interface IMultiplicationResult extends IBaseResult {
-    algorithm: StlAlgorithm.multiplication;
-    factor1: UUID;
-    factor2: UUID;
-}
-interface IAverageResult extends IBaseResult {
-    algorithm: StlAlgorithm.average;
-    inputChannel: UUID;
-}
-
-// PARAMETERS
-interface INumericParameter extends IBaseEntity {
-    value: number;
-}
-interface ITextParameter extends IBaseEntity {
-    value: string;
-}
-interface IArrayParameter extends IBaseEntity {
-    value: number[];
-}
-
-export type ISTLChannel = IMultiplicationChannel | IDeviceChannel;
-export type ISTLResult = IMaximumResult | IMinimumResult | IMultiplicationResult | IAverageResult;
-export type ISTLParameter = INumericParameter | ITextParameter | IArrayParameter;
-export type ISTLDevice = IBaseEntity;
+import { IBaseEntity } from './types/common';
+import { Algorithm, UnitTable } from './types/enums';
+import { IChannel } from './types/channels';
+import { IResult } from './types/results';
+import { IParameter } from './types/parameters';
 
 export interface IStandardTestingLibrary {
-    channels: ISTLChannel[];
-    results: ISTLResult[];
-    parameters: ISTLParameter[];
-    devices: ISTLDevice[];
+    channels: IChannel[];
+    results: IResult[];
+    parameters: IParameter[];
+    devices: IBaseEntity[];
 }
-
-// New type utilities
-type IsUUID<T> = T extends UUID ? true : false;
-type ExtractUUIDKeys<T> = {
-    [K in keyof T]: IsUUID<T[K]> extends true ? K : never
-}[keyof T];
-
-export type EntityUUIDProperties<T> = Pick<T, ExtractUUIDKeys<T>>;
 
 export const STLUUID = {
     Channel: {
@@ -121,13 +44,13 @@ export const allSTLEntities: IStandardTestingLibrary = {
     channels: [
         {
             uuid: STLUUID.Channel.Force,
-            unittable: StlUnitTable.Force,
+            unittable: UnitTable.Force,
             deviceInput: STLUUID.Device.ForceSensor,
         },
         {
             uuid: STLUUID.Channel.Stress,
-            unittable: StlUnitTable.Stress,
-            algorithm: StlAlgorithm.multiplication,
+            unittable: UnitTable.Stress,
+            algorithm: Algorithm.multiplication,
             inputChannelId1: STLUUID.Channel.Force,
             inputChannelId2: STLUUID.Result.CrossSection,
         },
@@ -135,20 +58,20 @@ export const allSTLEntities: IStandardTestingLibrary = {
     results: [
         {
             uuid: STLUUID.Result.ForceMaximum,
-            unittable: StlUnitTable.Force,
-            algorithm: StlAlgorithm.maximum,
+            unittable: UnitTable.Force,
+            algorithm: Algorithm.maximum,
             inputChannel: STLUUID.Channel.Force,
         },
         {
             uuid: STLUUID.Result.StressMaximum,
-            unittable: StlUnitTable.Stress,
-            algorithm: StlAlgorithm.maximum,
+            unittable: UnitTable.Stress,
+            algorithm: Algorithm.maximum,
             inputChannel: STLUUID.Channel.Stress,
         },
         {
             uuid: STLUUID.Result.CrossSection,
-            unittable: StlUnitTable.Area,
-            algorithm: StlAlgorithm.multiplication,
+            unittable: UnitTable.Area,
+            algorithm: Algorithm.multiplication,
             factor1: STLUUID.Parameter.SpecimenWidth,
             factor2: STLUUID.Parameter.SpecimenThickness,
         }
@@ -190,3 +113,10 @@ export const allSTLEntities: IStandardTestingLibrary = {
         },
     ]
 }
+
+// Re-export types
+export * from './types/common';
+export * from './types/enums';
+export * from './types/channels';
+export * from './types/results';
+export * from './types/parameters';
